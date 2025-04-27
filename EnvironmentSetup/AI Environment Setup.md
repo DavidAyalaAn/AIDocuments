@@ -476,3 +476,20 @@ chmod +x container_setup.sh
 bash container_setup.sh
 ```
 
+# Jupyter Notebook Setup
+
+
+## Assign Kernel
+
+When we create a jupyter notebook (extension .ipynb), we have the "Select Kernel" option to select the virtual environment we created before. Our kernel will be marked as "Virtual Env"
+
+<img src="AI Environment Setup Img/jupyter_kernel.png"  width="700px"/>
+
+## Verify GPU availability
+
+To verify if the GPU is available we can add a code line in our notebook with the following code:
+```python
+import torch
+torch.cuda.is_available()
+```
+When we run this code, we should receive in return "True" if it is all perfect.
