@@ -10,7 +10,7 @@ Enable windows features and restart the system
 - Virtual Machine Platform
 - Windows Subsytem for Linux
 
-	<img src="AIEnnvironment Setup/wsl_windows_features.png" style='max-width: 350px;'/>
+<img src="AI Environment Setup Img/wsl_windows_features.png" style='max-width: 250px;'/>
 
 ## WSL Installation
 
