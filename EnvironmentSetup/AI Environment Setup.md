@@ -125,7 +125,7 @@ Video Guide: **[https://www.youtube.com/watch?v=3JU7Pjwk4s0](https://www.youtube
 
 ## Verify Installation
 
-From the **==command prompt==** we can do the following:
+From the $\color{orange}{\textsf{command prompt}}$ we can do the following:
 
 1) You can check the installed version with this command:
 ```shell
@@ -161,12 +161,12 @@ docker login -u our_username
 
 ## Toolkit Installation
 
-Before follow these steps the recommendation is to look for this information in the official page NVIDIA. You can find the information by searching "**Installing the NVIDIA Container Toolkit**".
+Before follow these steps the recommendation is to look for this information in the official page NVIDIA. You can find the information by searching on the web "**Installing the NVIDIA Container Toolkit**".
 
 Also you could go directly by using this link:
 **[https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)**
 
-All these steps have to be entered in our **==Linux terminal==**.
+All these steps have to be entered in our $\color{orange}{\textsf{Linux terminal}}.
 
 1) Add the gpg  key for the repo
 ```shell
@@ -362,7 +362,7 @@ To make the setup of the container we have to options:
 - Batch File Setup, with this option we will have a file prepared with all the commands we need for our container, so when we need to create a new container we will just execute the file.
 ## Manual Setup
 
-All these commands have to be executed on the ==**container terminal**==.
+All these commands have to be executed on the $\color{orange}{\textsf{container terminal}}$.
 ### 1) Python Installation
 
 1) First we need to update the apt package
