@@ -37,8 +37,8 @@ wsl --install <Distro>
 ```
 <img src="AI Environment Setup Img/wsl_install_1.png" width="700px"/>
 2) In the process it will ask to create a root user:
-	UNIX username: davidayala
-	New password: LearningPath
+	UNIX username: *******
+	New password: ********
 
 <img src="AI Environment Setup Img/wsl_install_2.png" width="700px"/>
 2) When the installation has finished, it will automatically log us into the Linux terminal, we can quit by using the command "exit"
@@ -118,8 +118,8 @@ Video Guide: **[https://www.youtube.com/watch?v=3JU7Pjwk4s0](https://www.youtube
 4) You can skip to login with an account but is better to do it (we also can login from the command prompt)
 <img src="AI Environment Setup Img/docker_gui_installation_4.png"  width="600px"/>
 
-docker username: davidayalaan
-docker password account: VmMyS3lfPl3@s3
+docker username: *******
+docker password account: ********
 
 5) You can skip all the other steps and you should see the following
 
