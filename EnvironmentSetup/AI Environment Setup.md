@@ -10,20 +10,20 @@ Enable windows features and restart the system
 - Virtual Machine Platform
 - Windows Subsytem for Linux
 
-	<img src="AI Environment Setup Img/wsl_windows_features.png" width="350px"/>
+<img src="AI Environment Setup Img/wsl_windows_features.png" width="350px"/>
 
 ## WSL Installation
 
-1) To check if WSL is already installed from a command prompt:
+To check if WSL is already installed from a command prompt:
 ```shell
 wsl
 ```
 
 <img src="AI Environment Setup Img/wsl_check_installation.png" width="700px"/>
-	Here there is 3 possibilities:
-	- Not installed
-	- Installed without a distro
-	- Installed with a distro
+	Here we have 3 possibilities:
+	- WSL not installed
+	- WSL installed without a distro
+	- WSL installed with a distro
 
 ### WSL not installed
 
@@ -36,14 +36,13 @@ wsl --install
 wsl --install <Distro>
 ```
 <img src="AI Environment Setup Img/wsl_install_1.png" width="700px"/>
+
 2) In the process it will ask to create a root user:
-	UNIX username: *******
-	New password: ********
-
 <img src="AI Environment Setup Img/wsl_install_2.png" width="700px"/>
-2) When the installation has finished, it will automatically log us into the Linux terminal, we can quit by using the command "exit"
 
-3) Is recommended to always do the following steps:
+3) When the installation has finished, it will automatically log us into the Linux terminal, we can quit by using the command "exit"
+
+4) Is recommended to always do the following steps:
 
 ```shell
 #we check the installation with:
@@ -118,15 +117,10 @@ Video Guide: **[https://www.youtube.com/watch?v=3JU7Pjwk4s0](https://www.youtube
 4) You can skip to login with an account but is better to do it (we also can login from the command prompt)
 <img src="AI Environment Setup Img/docker_gui_installation_4.png"  width="600px"/>
 
-docker username: *******
-docker password account: ********
-
 5) You can skip all the other steps and you should see the following
-
 <img src="AI Environment Setup Img/docker_gui_installation_5.png"  width="500px"/>
 
 6) In settings we need to enable the WSL integration for the Linux distro (this is a requirement to enable the use of GPU in our code)
-
 <img src="AI Environment Setup Img/docker_gui_installation_6.png"  width="600px"/>
 
 ## Verify Installation
@@ -227,7 +221,6 @@ This command will:
 - --rm: Delete the container
 
 2) If we get in return a table with the information of the GPU it means it worked correctly
-
 <img src="AI Environment Setup Img/wsl_setup_gpu_verify_1.png" width="650px"/>
 
 3) Optionally if we want to delete the image created we first need to check the name or id of the image and then delete it with the following commands:
@@ -260,16 +253,13 @@ This is a simple installation of Visual Studio Code with all the values by defau
 ## Visual Studio Code Extensions
 
 1) Search and install the extension Dev Containers
-
 <img src="AI Environment Setup Img/vscode_ext_devcontainers.png"  width="650px"/>
 
 2) Search and install the extension Docker
-
 <img src="AI Environment Setup Img/vscode_ext_docker.png"  width="650px"/>
 
 3) Search and install the extension Python Extension
 <img src="AI Environment Setup Img/vscode_ext_python.png"  width="650px"/>
-
 
 4) Search and install the extension Jupyter
 <img src="AI Environment Setup Img/vscode_ext_jupyter.png"  width="650px"/>
@@ -282,25 +272,24 @@ This is a simple installation of Visual Studio Code with all the values by defau
 
 <img src="AI Environment Setup Img/vscode_setup_01.png"  width="650px"/>
 
-
 <img src="AI Environment Setup Img/vscode_setup_02.png"  width="400px"/>
-
 
 <img src="AI Environment Setup Img/vscode_setup_03.png"  width="350px"/>
 
 2) Show the terminal window
-
 <img src="AI Environment Setup Img/vscode_setup_04.png"  width="650px"/>
 
 3) On the terminal we can work as if we will do it in the command prompt, so we will access to our Linux distro
-
 <img src="AI Environment Setup Img/vscode_setup_05.png"  width="650px"/>
 
 4) From here we have two options:
-   - Create a docker image with all the setup we will need for our container, so if we need a new container we will just created from the image and we won't need to do anything else.
-   - Create a container and do all the setup on it.
+- Create a docker image with all the setup we will need for our container, so if we need a new container we will just created from the image and we won't need to do anything else.
+- Create a container and do all the setup on it.
+
+On this guide I'll use the second option but if you want to use the first option, you just need to check how to create the docker file and include many of the commands reviewed in the section "Container Setup/Manual Setup".
    
-	On this guide I'll use the second option but if you want to use the first option, you just need to check how to create the docker file and include many of the commands reviewed in the section "Container Setup/Manual Setup".
+
+
 
 
 ## Container Creation with NVIDIA/CUDA
