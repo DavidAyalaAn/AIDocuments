@@ -38,8 +38,8 @@ wsl --install <Distro>
 <img src="AI Environment Setup Img/wsl_install_1.png" width="700px"/>
 
 2) In the process it will ask to create a root user:
-   UNIX username: davidayala
-   New password: LearningPath
+   UNIX username: *******
+   New password: *******
 
 <img src="AI Environment Setup Img/wsl_install_2.png" width="700px"/>
 
@@ -117,8 +117,8 @@ Video Guide: **[https://www.youtube.com/watch?v=3JU7Pjwk4s0](https://www.youtube
 4) You can skip to login with an account but is better to do it (we also can login from the command prompt)
 <img src="AI Environment Setup Img/docker_gui_installation_4.png"  width="600px"/>
 
-docker username: davidayalaan
-docker password account: VmMyS3lfPl3@s3
+docker username: *******
+docker password account: *******
 
 5) You can skip all the other steps and you should see the following
 <img src="AI Environment Setup Img/docker_gui_installation_5.png"  width="500px"/>
@@ -315,10 +315,10 @@ nvidia-msi
 2) Once we have it we use the command:
 ```shell
 #This command will download the image, but sometimes there are connection problems
-docker pull nvidia/cuda:12.9.0-devel-ubuntu24.04
+docker pull nvidia/cuda:12.6.3-devel-ubuntu24.04
 
 #So if the previous command does not work, we can use this code that will create a container and immediatly after will delete it
-docker run --rm --gpus all nvidia/cuda:12.9.0-devel-ubuntu24.04 nvidia-smi
+docker run --rm --gpus all nvidia/cuda:12.6.3-devel-ubuntu24.04 nvidia-smi
 ```
 
 3) We will see the image on the docker panel
@@ -326,7 +326,7 @@ docker run --rm --gpus all nvidia/cuda:12.9.0-devel-ubuntu24.04 nvidia-smi
 
 4) Now that we have the image we will create the container from the  $\color{orange}{\textsf{terminal in Visual Studio Code}}$
 ```shell
-docker run --network=host --gpus all -it --name ai_learning -v ${pwd}:/app nvidia/cuda:12.9.0-devel-ubuntu24.04
+docker run --network=host --gpus all -it --name ai_learning -v ${pwd}:/app nvidia/cuda:12.6.3-devel-ubuntu24.04
 ```
 	This command will do the following:
 	- run: creates the container
