@@ -1,14 +1,32 @@
+This document contains different machine learning techniques and algorithms used to build predictive models.  The document is structured resembling the classical flow steps to build an ml model.
 
-# 01 Label Encoding
+<img src="Machine Learning Images/MLFlow.png" width="700px" />
 
-## 01.01 Encoding Methods
-### Manual - Encoder
+This diagram is not an official representation, but was done based in my initial learning experience.
+Commonly all the algorithms in this document are included in their own classes or in grouped classes, to keep the code organized.
+
+# 01 Metric Selection
+
+## 01.01 Accuracy
+
+```python
+correct_classifications = np.sum(np.equal(valid.values,predicted))
+tot_classifications = len(valid)
+accuracy = correct_classifications/tot_classifications
+```
+
+
+# 02 Data Preprocessing
+## 02.01 Feature Encoding
+
+### 02.01.01 Encoding Methods
+#### Manual - Encoder
 
 ```python
 df['binary_column'] = df['binary_column'].map({'Introvert':0, 'Extrovert':1})
 ```
 
-### Sklearn - Encoder
+#### Sklearn - Encoder
 
 We have to encode categorical columns, as we cannot use text.
 ```python
@@ -26,7 +44,7 @@ mask = ~test_df[col].isna()
 test_df[mask,'feature_encoded'] = le.transform(test_df[mask,'feature'])
 ```
 
-## 01.02 Use of Multiple Encoders
+### 02.01.02 Use of Multiple Encoders
 For many columns we can use a dictionary like this:
 ```python
 from sklearn.preprocessing import LabelEncoder
@@ -47,26 +65,45 @@ for col in ['Drained_after_socializing','Stage_fear']:
 ```
 
 
-# 02 Missing Values
+## 02.02 Outlier Management
 
-## 02.01 Identify null values
+### 02.02.01 Null Sample Outliers
+
+
+```python
+nan_allowed_x_sample = 3
+
+#Retrieves the index samples to drop, which have more nan values than the allowed
+temp_df = pd.DataFrame(df.isna().sum(axis=1),columns=['counting'])
+na_idx = list(temp_df.loc[temp_df['counting']>nan_allowed_x_sample].index)
+
+#Drops the samples and resets the index of the DataFrame
+df.drop(na_idx,inplace=True)
+df.reset_index(drop=True, inplace=True)
+```
+
+
+
+## 02.03 Missing Values Imputation
+
+### 02.03.01 Identify null values
 Identify columns with null values
 ```python
 mising_val_count_by_column = df.isna().sum()
 print(mising_val_count_by_column[mising_val_count_by_column>0])
 ```
 
-## 02.02 Methods
+### 02.03.02 Methods
 
-### 02.02.01 Droping
-#### Drop Columns
+#### 02.03.02.01 Dropping
+##### Drop Columns
 If the column have many null values and we believe the column is not relevant, we can remove it.
 Remember this has to be applied for train and validation datasets.
 ```python
 df.drop(columns=['col1','col2'], axis=1, inplace=True)
 ```
 
-#### Drop Rows
+##### Drop Rows
 We can consider this option only if we are sure we won't have empty values in a production environment. Otherwise, the prediction is going to fail for those cases.
 ```python
 
@@ -81,9 +118,9 @@ df.dropna(inplace=True)
 
 ```
 
-### 02.02.02 Imputer Benchmark
+#### 02.03.02.02 Imputer Benchmark
 We use this method to find the best imputer to use with our dataset. Nevertheless, even if we find the estimator with best score, it doesn't mean the prediction will be the best one, so we probably will also need to test with different imputation methods.
-#### Iterative Imputer
+##### Iterative Imputer
 For this, benchmark we follow this processes:
 1. Begin from a data set without null values
 2. Get a comparison base with BayesianRidge with that dataset
@@ -250,10 +287,10 @@ plt.show()
 
 
 
-### 02.02.03 Imputation
+#### 02.04.02.03 Imputation
 This code updates the null values for another value.
 
-#### Simple Imputer
+##### Simple Imputer
 The default strategy is the mean, but we can use others. 
 Is recommended to use different imputers depending on the column type: 
 - **Numerical columns**: mean, median
@@ -276,7 +313,7 @@ imputed_X_valid.columns = X_valid.columns
 ```
 
 
-#### KNN Imputer
+##### KNN Imputer
 Uses **k-Nearest Neighbors** based on a specified distance metric (Euclidean distance, cosine similarity,...)
 
 ```python
@@ -298,7 +335,7 @@ df[numerical_columns] = imputed_df.values
 
 ```
 
-#### Iterative Imputer
+##### Iterative Imputer
 This uses statistics techniques to fill the null values.
 
 - Iterative + BayesianRidge
@@ -352,7 +389,7 @@ df.loc[:,numerical_columns] = imputed_df.values
 ```
 
 
-#### Quantile Group Imputer
+##### Quantile Group Imputer
 This technique is used when a feature has a behavior similar to another feature.
 So we can create some buckets (bins) respect the source (reference) feature and compute the median of our target feature for each bin.
 
@@ -374,7 +411,7 @@ df.drop(columns = [temp_bin_col], inplace=True)
 ```
 
 
-#### Quarter Imputation
+##### Quarter Imputation
 This technique is used when the target feature has a strong seasonal behavior, for example cloth tendencies.
 
 ```python
@@ -392,34 +429,18 @@ df['valor'] = df['valor'].fillna(
 ```
 
 
-# 03 Duplicated Records
+## 02.04 Duplicated Records
 We have to ensure our set does not have any duplicated rows, to avoid skew generation.
 
 ```python
 personality_df.drop_duplicates()
 ```
 
-# 04 Outlayers
 
-## 04.01 Null Samples Outlayers
+# 03 Feature Engineering
+## 03.01 Dataset Balancing
 
-
-```python
-nan_allowed_x_sample = 3
-
-#Retrieves the index samples to drop, which have more nan values than the allowed
-temp_df = pd.DataFrame(df.isna().sum(axis=1),columns=['counting'])
-na_idx = list(temp_df.loc[temp_df['counting']>nan_allowed_x_sample].index)
-
-#Drops the samples and resets the index of the DataFrame
-df.drop(na_idx,inplace=True)
-df.reset_index(drop=True, inplace=True)
-```
-
-
-# 05 Data Balancing
-
-## Manual Downsampling
+### Down sampling
 ```python
 major_df = df.loc[df['target_col']==0]
 minor_df = df.loc[df['target_col']==1]
@@ -432,7 +453,7 @@ df_balanced = pd.concat([minor_df,df_major_downsampled])
 df_balanced
 ```
 
-## sklearn resample
+### Up sampling - sklearn resample
 
 ```python
 from sklearn.utils import resample
@@ -450,12 +471,14 @@ df_minority_upsample = resample(
 #Combine
 df_balanced = pd.concat([major_df, df_minority_upsampled])
 df_balanced = df_balanced.sample(frac=1, random_state=42).reset_index(drop=True)
-
+ 
 ```
 
-# 06 Standardization
 
-## 06.01 Min-Max Scaling
+# 04 Data Transformation
+## 04.01 Feature Scaling
+
+### 04.01.01 Min-Max Scaling
 This method replaces the numerical values for a number on the requested range.
 This is not recommended for categorical features.
 By default the default range is (min_val=0, max_val=1).
@@ -470,7 +493,7 @@ scaled_data = minmax_scaling(df,columns=['Column1','Column2'],min_val=0,max_val=
 ```
 
 
-## 06.02 Min-Max Scaler
+### 04.01.02 Min-Max Scaler
 This method replaces the numerical values for a number on the range between 0 - 1.
 This is not recommended for categorical features.
 By default the default range is (min_val=0, max_val=1).
@@ -491,7 +514,7 @@ X_test_scaled = scaler.transform(X_test)
 
 
 
-## 06.03 Standard Scaler
+### 04.01.03 Standardization
 
 This applies the normalization to scale the data.
 
@@ -518,7 +541,7 @@ df[feature_columns] = scaler.transform(df[feature_columns])
 
 
 
-## 06.04 Stats
+### 04.01.04 Stats
 
 This library have many statistics methods.
 
@@ -536,7 +559,7 @@ positive = data.columndata > 0
 positive_data = positive.columndata.loc[positive]
 ```
 
-### 06.04.01 Boxcox
+#### Boxcox
 
 ```python
 from scipy import stats
@@ -545,7 +568,7 @@ normalized_data = stats.boxcox(original_data) #use the data in column [0]
 
 ```
 
-### 06.04.02 Zscore
+#### Zscore
 
 ```python
 from scipy import stats
@@ -554,7 +577,7 @@ z_scores = stats.zscore(df['feature'])
 
 ```
 
-### 06.04.03 Ttest_ind
+#### Ttest_ind
 
 ```python
 from scipy import stats
@@ -562,7 +585,7 @@ from scipy import stats
 t_stat, p_val = stats.ttest_ind(group1, group2)
 ```
 
-### 06.04.04 Probability distribution (Norm)
+#### Probability distribution (Norm)
 
 ```python
 from scipy.stats import norm
@@ -570,7 +593,7 @@ from scipy.stats import norm
 prob = norm.cdf(x=1.5, loc=0, scale=1)
 ```
 
-### 06.04.05 Shapiro
+#### Shapiro
 
 ```python
 from scipy.stats import shapiro
@@ -581,10 +604,9 @@ if p > 0.05:
 ```
 
 
-# 07 Machine Learning Models
-Also know as **training algorithms** 
+# 05 Model Training & Selection
 
-## 07.01 Scaling
+## 05.01 Class Weight Computation
 
 ### Count Scaling
 
@@ -605,9 +627,13 @@ weights = compute_class_weight('balanced', classes=np.unique(train_y), y=train_y
 scale_pos_weight = weights[0]/weights[1]
 ```
 
-## 07.02 Supervised Regression
 
-### Decision Tree Regressor
+## 05.02 Model Setup
+
+
+### 05.02.01 Supervised Regression
+
+#### Decision Tree Regressor
 Type: Single Model
 
 ```python
@@ -620,7 +646,7 @@ predicted = model.predict(valid_X)
 ```
 
 
-### Logistic Regression
+#### Logistic Regression
 
 ```python
 from sklearn.linear_model import LogisticRegression
@@ -632,7 +658,7 @@ model.fit(train_X,train_y)
 ```
 
 
-### XGBoost (Extreme Gradient Boosting)
+#### XGBoost (Extreme Gradient Boosting)
 Type: Ensembled Model
 
 
@@ -658,11 +684,9 @@ xgb_model.fit(
 ```
 
 
+### 05.02.01 Supervised Classification
 
-
-## 07.03 Supervised Classification
-
-### Decision Tree Classifier
+#### Decision Tree Classifier
 Type: Single Model
 
 ```python
@@ -676,7 +700,7 @@ valid_pred_y = model.predict(valid_X)
 
 
 
-### Logistic Classifier
+#### Logistic Classifier
 
 ```python
 from sklearn.linear_model import LogisticClassifier
@@ -687,7 +711,7 @@ model.fit(train_X,train_y)
 valid_pred_y = model.predict(valid_X)
 ```
 
-### Random Forest Classifier
+#### Random Forest Classifier
 
 ```python
 from sklearn.ensemble import RandomForestRegressor
@@ -699,7 +723,7 @@ valid_pred_y = model.predict(valid_X)
 ```
 
 
-### XGBoost (Extreme Gradient Boosting)
+#### XGBoost (Extreme Gradient Boosting)
 Type: Ensembled Model
 
 
@@ -738,7 +762,7 @@ valid_pred_y = model.predict(valid_X)
 
 ```
 
-### LGBMClassifier (Lightgbm Classifier)
+#### LGBMClassifier (Lightgbm Classifier)
 
 ```python
 import lightgbm
@@ -775,7 +799,7 @@ valid_pred_y = model.predict(valid_X)
 ```
 
 
-### CatBoostClassifier
+#### CatBoostClassifier
 
 Simple Use
 
@@ -828,7 +852,7 @@ valid_pred_y = model.predict(valid_X)
 
 
 
-## 07.04 Cross Validation
+## 05.03 Cross Validation
 
 ### sklearn - StratifiedKFold
 
@@ -882,46 +906,9 @@ for train_idx, valid_idx in kf.split(df_X, df_y):
 ```
 
 
-## 07.05 Voting Classification
 
-
-### sklearn - VotingClassifier
-
-
-```python
-
-from sklearn.ensemble import VotingClassifier
-
-voting = VotingClassifier(
-	estimators=[
-		('model1_abrv',model1),
-		('model2_abrv',model2),
-		('model3_abrv',model3)
-	],
-	voting='soft' #options: hard and soft
-)
-
-voting.fit(X_train, y_train)
-```
-
-
-
-
-
-# 08 Scoring Methods
-
-## 08.01 Accuracy
-
-```python
-correct_classifications = np.sum(np.equal(valid.values,predicted))
-tot_classifications = len(valid)
-accuracy = correct_classifications/tot_classifications
-```
-
-
-
-# 09 Hyperparameter Optimization
-## 09.01 GridSearchCV
+## 05.04 Hyperparameter Optimization
+### 05.04.01 GridSearchCV
 
 ```python
 param_grid = {
@@ -953,13 +940,13 @@ grid_search.fit(train_X, train_y)
 ```
 
 
-## 09.02 RandomizedSearchCV
+### 05.04.02 RandomizedSearchCV
 
 ```python
 ```
 
 
-## 09.03 Optuna
+### 05.04.03 Optuna
 
 To use this hyperparameter optimization technique we need to define first the objective function, which has:
 - The parameter grid with the range of values to evaluate the model
@@ -969,7 +956,7 @@ To use this hyperparameter optimization technique we need to define first the ob
 
 This objective function is used in the Optuna code to evaluate different random values and find the best parameter combination.
 
-### Objective Function
+#### Objective Function
 
 Some common options to define the objective function are by just using the model or to complement with cross validation technique.
 
@@ -1051,7 +1038,7 @@ def objective(trial):
 
 ```
 
-### Optuna Logic
+#### Optuna Logic
 
 We feed this code with the objective function previously defined.
 If we do not use a sample, by default we are using TPESampler()
@@ -1082,12 +1069,52 @@ print("Best Params:", study.best_params)
 
 
 
-## 09.04 BayesianOptimization
+### 05.04.04 BayesianOptimization
 
 
 ```python
 ```
 
+
+
+
+## 05.05 Ensembling
+
+
+#### Voting Classification (sklearn - VotingClassifier)
+
+
+```python
+
+from sklearn.ensemble import VotingClassifier
+
+voting = VotingClassifier(
+	estimators=[
+		('model1_abrv',model1),
+		('model2_abrv',model2),
+		('model3_abrv',model3)
+	],
+	voting='soft' #options: hard and soft
+)
+
+voting.fit(X_train, y_train)
+```
+
+#### Bagging
+
+```python
+
+```
+
+#### Boosting
+
+```python
+```
+
+#### Stacking
+
+```python
+```
 
 
 
