@@ -1,6 +1,6 @@
 This document contains different machine learning techniques and algorithms used to build predictive models.  The document is structured resembling the classical flow steps to build an ml model.
 
-<img src="Machine Learning Images/MLFlow.png" width="700px" />
+<img src="MachineLearningImages/MLFlow.png" width="700px" />
 
 This diagram is not an official representation, but was done based in my initial learning experience.
 Commonly all the algorithms in this document are included in their own classes or in grouped classes, to keep the code organized.
