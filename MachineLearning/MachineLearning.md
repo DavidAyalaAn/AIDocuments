@@ -1,3 +1,6 @@
+# Machine Learning Notes
+---
+
 This document contains different machine learning techniques and algorithms used to build predictive models.  The document is structured resembling the classical flow steps to build an ml model.
 
 <img src="MachineLearningImages/MLFlow.png" width="700px" />
@@ -6,8 +9,10 @@ This diagram is not an official representation, but was done based in my initial
 Commonly all the algorithms in this document are included in their own classes or in grouped classes, to keep the code organized.
 
 # 01 Metric Selection
+---
 
-## 01.01 Accuracy
+## 01.01 Accuracy 
+
 
 ```python
 correct_classifications = np.sum(np.equal(valid.values,predicted))
@@ -17,6 +22,7 @@ accuracy = correct_classifications/tot_classifications
 
 
 # 02 Data Preprocessing
+---
 ## 02.01 Feature Encoding
 
 ### 02.01.01 Encoding Methods
@@ -438,6 +444,7 @@ personality_df.drop_duplicates()
 
 
 # 03 Feature Engineering
+---
 ## 03.01 Dataset Balancing
 
 ### Down sampling
@@ -476,6 +483,7 @@ df_balanced = df_balanced.sample(frac=1, random_state=42).reset_index(drop=True)
 
 
 # 04 Data Transformation
+---
 ## 04.01 Feature Scaling
 
 ### 04.01.01 Min-Max Scaling
@@ -518,7 +526,8 @@ X_test_scaled = scaler.transform(X_test)
 
 This applies the normalization to scale the data.
 
-Normalization: $x'=\frac{x - \mu}{\sigma}~$
+Normalization: 
+$$x'=\frac{x - \mu}{\sigma}~$$
 
 - This method is one of the most common used.
 - This stores the mean and standard deviation to apply it to other data sets.
@@ -605,6 +614,7 @@ if p > 0.05:
 
 
 # 05 Model Training & Selection
+---
 
 ## 05.01 Class Weight Computation
 
