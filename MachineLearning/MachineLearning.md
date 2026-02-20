@@ -11,30 +11,145 @@ Commonly all the algorithms in this document are included in their own classes o
 # 01 Metric Selection
 ---
 
-## 01.01 Accuracy 
+## 01.01 Accuracy
+Proportion of correct predictions out of all predictions.
 
+$Accuracy = \frac{\text{Number of Correct Predictions}}{\text{Total Number or Predictions}} = \frac{TP + FP}{TP + TN + FP + FN }$
+
+It can be misleading in cases of imbalanced datasets.
+There is the possibility of having a good score because failures in minor classes are not going to generate enough impact in the score.
+Depending in the scenario, a class could be more relevant but also having minor samples, so it could have bigger negative impact on bussiness.
 
 ```python
-correct_classifications = np.sum(np.equal(valid.values,predicted))
-tot_classifications = len(valid)
+# predicted -> list of predictions done by the model
+# validation -> list of target values of the validation set
+
+correct_classifications = np.sum(np.equal(validation.values,predicted))
+tot_classifications = len(validation)
 accuracy = correct_classifications/tot_classifications
 ```
 
+```python
+from sklearn.metrics import accuracy_score
+accuracy_score(y_true, y_pred)
+```
+## 01.02 Precision
+
+Mainly use in binary classification tasks.
+Useful when the cost of a false positive is high.
+
+$Precision = \frac{TP}{TP+FP} = \frac{\text{Model true Positives}}{\text{Model Positives}}$
+
+Examples: Spam Filter, Document Search, Biometric Login.
+In diagnosis: 
+	TN -> (irrelevant) patient does not have a disease.
+	FP -> (critical) patient does not have a disease but you begin the treatment.
+	TP -> (relevant) correct prediction of patient having a disease and treatment begins.
+	FN -> (irrelevant) patient has a disease but it does not have consequences.
+
+
+
+```python
+
+```
+
+```python
+from sklearn.metrics import precision_score
+precision_score(y_true, y_pred)
+```
+## 01.03 Recall
+Also known as sensitivity.
+Useful when the cost of a false negative is high, like disease prediction.
+Is more common to use it along side other metrics.
+
+$Recall = \frac{TP}{TP+FN }= \frac{\text{Model true Positives}}{\text{Real Positives}}$
+
+Examples: Cancer detection, Terrorist identification.
+In deseases: 
+	TN -> (irrelevant) patient does not have the disease
+	FP -> (irrelevant) patient does not have the disease
+	TP -> (relevant) correct prediction of patient having disease
+	FN -> (critical) patient has the disease and was not identified
+
+
+
+```python
+```
+
+```python
+from sklearn.metrics import recall_score
+recall_score(y_true, y_pred)
+```
+
+## 01.04 Specifity
+
+$Specifity = \frac{\text{Model true negative}}{\text{Real Negatives}}$
+
+## 01.04 F1 score
+Harmonic mean of Precision and Recall.
+Useful when we need a balance between them, so it punishes extreme values.
+
+$\text{F1 Score} = 2 * \frac{Precision*Recall}{Precision+Recall}$
+
+Good in imbalanced datasets and when there is no clear priority between FP and FN.
+
+
+```python
+```
+
+```python
+from sklearn.metrics import f1_score
+f1_score(y_true, y_pred)
+```
+## 01.04 FB - Score
+
+$\text{F B} = (2 + beta^2)* \frac{Precision*Recall}{Precision+Recall}$
+
+## 01.05 Logarithmic Loss (Log Loss)
+Measures the uncertainty of the model's prediction.
+Penalizes the model for assigning low probability to correct classes.
+Used in multiclass classification.
+
+$\text{Logarithmic Loss}=-\frac{1}{N} \sum_{i=1}^{N} \sum_{j=1}^{M}y_{ij}*log(p_{ij})$ 
+
+Examples: 
+```python
+
+```
+
+## 01.06 Metric Set
+
+```python
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
+def Metrics(y_true,y_pred,data='train'):
+    print('The metrics for the {} dataset are:'.format(data))
+    print('Precision: %.3f' % precision_score(y_true, y_pred))
+    print('Recall: %.3f' % recall_score(y_true, y_pred))
+    print('Accuracy: %.3f' % accuracy_score(y_true, y_pred))
+    print('F1 Score: %.3f' % f1_score(y_true, y_pred))
+    print()
+    print()
+    print()
+    
+Metrics(y_test,preds_test_rl,data='test')
+```
 
 # 02 Data Preprocessing
 ---
-## 02.01 Feature Encoding
+Data preprocessing includes all the activities to get and clean data from sources to be used in feature engineering.
 
-### 02.01.01 Encoding Methods
-#### Manual - Encoder
+## 02.01 Feature Encoding
+This phase is important to transform all category features to numerical.
+
+### 02.01.01 Binary Encoding
 
 ```python
 df['binary_column'] = df['binary_column'].map({'Introvert':0, 'Extrovert':1})
 ```
 
-#### Sklearn - Encoder
+### 02.01.02 Labeling Encoding
 
-We have to encode categorical columns, as we cannot use text.
+#### For One Feature
 ```python
 from sklearn.preprocessing import LabelEncoder
 
@@ -50,7 +165,7 @@ mask = ~test_df[col].isna()
 test_df[mask,'feature_encoded'] = le.transform(test_df[mask,'feature'])
 ```
 
-### 02.01.02 Use of Multiple Encoders
+#### For Multiple Features
 For many columns we can use a dictionary like this:
 ```python
 from sklearn.preprocessing import LabelEncoder
@@ -70,6 +185,21 @@ for col in ['Drained_after_socializing','Stage_fear']:
 
 ```
 
+### 02.01.03 One-Hot Encoding
+
+```python
+feature_name = 'col'
+label_df = df.pivot(columns=feature_name,values=feature_name)
+new_columns = feature_name+'_'+label_df.columns
+label_df.columns = new_columns
+label_df = label_df[label_df.columns[:-1]]
+
+for col in label_df.columns:
+    label_df.loc[~label_df[col].isna(),col]=1
+    label_df.loc[label_df[col].isna(),col]=0
+    
+pd.concat([df,label_df],axis=1)
+```
 
 ## 02.02 Outlier Management
 
@@ -97,6 +227,12 @@ Identify columns with null values
 ```python
 mising_val_count_by_column = df.isna().sum()
 print(mising_val_count_by_column[mising_val_count_by_column>0])
+```
+
+Identify rows with null values
+```python
+missing_val_count_by_row = df.isna().sum(axis=1)
+df.loc[missing_val_count_by_row>0]
 ```
 
 ### 02.03.02 Methods
@@ -296,6 +432,11 @@ plt.show()
 #### 02.04.02.03 Imputation
 This code updates the null values for another value.
 
+##### Manual Fill
+
+```python
+df[['column_names']].fillna(replacement_value)
+```
 ##### Simple Imputer
 The default strategy is the mean, but we can use others. 
 Is recommended to use different imputers depending on the column type: 
@@ -318,6 +459,29 @@ imputed_X_valid.columns = X_valid.columns
 
 ```
 
+##### Linear Regression Imputer
+```python
+
+mask_train = df['feature_name'].notnull()
+mask_predict = df['feature_name'].isnull()
+
+# Separamos la variable a predecir que se usará en el entrenamiento
+X_train = df_diabetes.loc[mask_train, ['feature_name']]
+y_train = df_diabetes.loc[mask_train, 'target_feature']
+
+# Definimos el dataset que contiene nuestros valores nulos
+X_pred = df_diabetes.loc[mask_predict, ['feature_name']]
+
+# Entrenamos el modelo de Regresión Lineal
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Predecimos los valores faltantes
+y_predicted = model.predict(X_pred)
+
+# Asignamos las predicciones solo a las filas correspondientes
+df_diabetes.loc[mask_predict, 'feature_name'] = y_predicted
+```
 
 ##### KNN Imputer
 Uses **k-Nearest Neighbors** based on a specified distance metric (Euclidean distance, cosine similarity,...)
@@ -478,13 +642,107 @@ df_minority_upsample = resample(
 #Combine
 df_balanced = pd.concat([major_df, df_minority_upsampled])
 df_balanced = df_balanced.sample(frac=1, random_state=42).reset_index(drop=True)
+
  
+```
+
+
+### Smote
+
+```python
+from imblearn.over_sampling import SMOTE import pandas as pd
+
+# Separar características y variable objetivo
+X = df_raw.drop('Outcome', axis=1)
+y = df_raw['Outcome']
+
+# Perform SMOTE
+smote = SMOTE(random_state=123)
+X_smote, y_smote = smote.fit_resample(X, y)
+
+# Combinar todo de nuevo en un solo DataFrame
+df_smote = pd.concat( [ pd.DataFrame(X_smote, columns=X.columns), pd.DataFrame(y_smote, columns=['Outcome']) ], axis=1 )
+
+```
+
+## 03.02 Pivotaje
+
+```python
+df_grouped = ( df_demanda_programada .groupby(['DayOfWeek', 'Month'], observed=True)['Demanda programada'] .sum() .reset_index() )
+
+df_pivot = df_grouped.pivot( index='Month', columns='DayOfWeek', values='Demanda programada' )
+```
+
+## Join/Merge
+
+```python
+import pandas as pd
+
+# 1. Leer los archivos (parecen ser .txt con separador punto y coma)
+df_pp = pd.read_csv('PP.txt', delimiter=';')
+df_tn = pd.read_csv('Tn.txt', delimiter=';')
+df_tx = pd.read_csv('Tx.txt', delimiter=';')
+
+# 2. Mostrar las primeras filas de cada dataframe para verificar
+print(df_pp.head())
+print(df_tn.head())
+print(df_tx.head())
+
+# 3. Merge secuencial usando las dos claves: 'idEstacion' y 'FechaHora'
+df_merged = pd.merge(
+    df_pp, 
+    df_tn, 
+    on=['idEstacion', 'FechaHora'], 
+    how='outer',
+    suffixes=('_pp', '_tn')
+)
+
+df_merged = pd.merge(
+    df_merged, 
+    df_tx, 
+    on=['idEstacion', 'FechaHora'], 
+    how='outer',
+    suffixes=('', '_tx')
+)
+
+```
+## 03.02 Feature Creation
+
+### 03.02.01 PCA - Principal Component Analysis
+
+```python
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+fetures = df.drop('target_col',axis=1)
+
+# First we normalize our data
+scaler = StandardScaler()
+df_scaled = scaler.fit_transform(fetures)
+
+#We apply PCA
+pca = PCA(n_components=2)
+principal_components = pca.fit_transform(df_scaled)
+```
+
+
+# 04 Train - Test - Validation Split
+---
+```python
+from sklearn.model_selection import train_test_split
+
+x=df_diabetes.iloc[:,:-1]
+
+y=df_diabetes.iloc[:,-1]
+
+x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.3,random_state=0,shuffle=True,stratify=y)
 ```
 
 
 # 04 Data Transformation
 ---
 ## 04.01 Feature Scaling
+
 
 ### 04.01.01 Min-Max Scaling
 This method replaces the numerical values for a number on the requested range.
@@ -568,7 +826,7 @@ positive = data.columndata > 0
 positive_data = positive.columndata.loc[positive]
 ```
 
-#### Boxcox
+#### Box-cox
 
 ```python
 from scipy import stats
@@ -649,10 +907,10 @@ Type: Single Model
 ```python
 from sklearn.tree import DecisionTreeRegressor
 
-model = DecisionTreeRegressor(random_state=0)
-model.fit(train_X,train_y)
+model_dtr = DecisionTreeRegressor(random_state=0)
+model_dtr.fit(train_X,train_y)
 
-predicted = model.predict(valid_X)
+predicted = model_dtr.predict(valid_X)
 ```
 
 
@@ -661,13 +919,32 @@ predicted = model.predict(valid_X)
 ```python
 from sklearn.linear_model import LogisticRegression
 
-model = LogisticRegression(random_state=0)
-model.fit(train_X,train_y)
+model_lr = LogisticRegression(random_state=0)
+model_lr.fit(train_X,train_y)
 
-
+predicted = model_lr.predict(valid_X)
 ```
 
+#### Linear Discriminant Analysis
+```python
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
+model_lda = LinearDiscriminantAnalysis()
+model_lda.fit(train_X.values, train_y)
+
+predicted = model_lda.predict(valid_X)
+```
+
+#### KNeighboors Classifier
+```python
+from sklearn.neighbors import KNeighborsClassifier
+
+model_knn = KNeighborsClassifier(n_neighbors=10)
+model_knn.fit(train_X.values, train_y.values.ravel())
+
+preds_train_knn = model_knn.predict(train_X)
+preds_test_knn = model_knn.predict(test_X)
+```
 #### XGBoost (Extreme Gradient Boosting)
 Type: Ensembled Model
 
